@@ -11,7 +11,7 @@ class Keyring {
             caver.wallet.add(keyring);
             caver.klay.accounts.wallet.add(keyring._key._privateKey);
 
-            return JSON.stringify(keyring);
+            return keyring;
 
         }catch(err){
             console.log(err);
@@ -78,6 +78,6 @@ class Keyring {
 
 }
 
-const keyring = new Keyring()
+const keyring = new Keyring();
 
-module.exports = keyring
+module.exports = keyring;

@@ -1,8 +1,5 @@
 require('dotenv').config();
 
-const args = process.argv;
-
-const { ValueTransfer } = require('caver-js');
 const keyring = require('./libs/keyring');
 
 const menu = ['[1] Create v4 keystore', '[2] Get account type', '[3] Get nonce', '[4] Get balance', '[5] Send klay', '[6] Create mnemonic code', '[7] Exit'];
