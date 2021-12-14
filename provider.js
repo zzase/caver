@@ -1,4 +1,6 @@
-const Caver = require('caver-js')
-const caver = new Caver(process.env.SCN_URL)
+require('dotenv').config();
 
-module.exports = caver
+const Caver = require('caver-js');
+const caver = new Caver(process.env.SCN_URL);
+
+module.exports = caver;
