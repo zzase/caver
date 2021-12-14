@@ -29,7 +29,9 @@ const run = ()=>{
 
         switch(line){
             case '1' :
-                keyring.createKeyring()
+                r.question('password : ', (password)=>{
+                    keyring.createKeyring(password)
+                })
                 break;
             
             case '7' :

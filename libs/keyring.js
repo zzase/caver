@@ -4,13 +4,36 @@ const fs = require('fs')
 const caver = require('../provider')
 
 class Keyring {
-    createKeyring () {
-        const keystore = fs.readFileSync(process.env.KLAYTN_KEYSTORE_PATH,'utf-8')
-        const keyring = caver.wallet.keyring.decrypt(keystore,process.env.KLAYTN_KEYSTORE_PW)
-        
-        caver.wallet.add(keyring)
+    createKeyring = async (password)=> {
+        try{
+            const keystore = fs.readFileSync(process.env.KLAYTN_KEYSTORE_PATH,'utf-8')
+            const keyring = await caver.wallet.keyring.decrypt(keystore,password)
+            caver.wallet.add(keyring)
 
-        console.log(keyring)
+            console.log(keyring)
+        }catch(err){
+            console.log(err)
+        }
+    }
+
+    getAccountType() {
+
+    }
+
+    getNonce() {
+
+    }
+
+    getBalance() {
+
+    }
+
+    sendKlay() {
+
+    }
+
+    createMnemonic() {
+
     }
 
 }
