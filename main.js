@@ -28,14 +28,14 @@ const run = ()=>{
         switch(line){
             case '1' :
                 r.question('password : ', async (password)=>{
-                    const key = await keyring.createKeyring(password)
-                    console.log(key)
+                    const key = await keyring.createKeyring(password);
+                    console.log(key);
                 })
                 break;
 
             case '2' :
                 r.question('account : ',async (account)=>{
-                    const accountType = await keyring.getAccountType(account)
+                    const accountType = await keyring.getRpcAccountType(account);
 
                     console.log(`Account Type : 0x${accountType}`);
                 });
@@ -43,7 +43,7 @@ const run = ()=>{
             
             case '3' :
                 r.question('account : ',async (account)=>{
-                    const nonce = await keyring.getNonce(account)
+                    const nonce = await keyring.getRpcNonce(account);
 
                     console.log(`Nonce : ${nonce}`);
                 });
@@ -51,7 +51,7 @@ const run = ()=>{
 
             case '4' :
                 r.question('account : ',async (account)=>{
-                    const balance = await keyring.getBalance(account)
+                    const balance = await keyring.getRpcBalance(account);
 
                     console.log(`Balance : ${balance} klay`);
                 });
@@ -60,10 +60,14 @@ const run = ()=>{
                 r.question('from : ',async (from)=>{
                     r.question('to : ', async (to)=>{
                         r.question('value : ', async(value)=>{
-                            keyring.sendKlay(from,to,value);
+                            keyring.sendRpcKlay(from,to,value);
                         })
                     })
                 });
+                break;
+
+            case '6' :
+                console.log(keyring.createMnemonic());
                 break;
 
             case '7' :

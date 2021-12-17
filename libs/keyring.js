@@ -2,43 +2,74 @@ require('dotenv').config();
 
 const fs = require('fs');
 const caver = require('../provider');
+const bip39 = require('bip39');
 
 class Keyring {
     createKeyring = async (password)=> {
         try{
-            const keystore = fs.readFileSync(process.env.KLAYTN_KEYSTORE_PATH,'utf-8');
-            const keyring = await caver.wallet.keyring.decrypt(keystore,password);
-            caver.wallet.add(keyring);
-            caver.klay.accounts.wallet.add(keyring._key._privateKey);
+           
+            //const keyring = await caver.wallet.keyring.generate();
+            const account = await caver.klay.accounts.create(password);
+            const keyring = await account.encrypt(password)
+            
+            fs.writeFile(`keystore/keystore-${account.address}.json`,JSON.stringify(keyring),async (err)=>{
+                if(err){
+                    console.log('fs error : ' + err);
+                }
+                else{
+                    console.log('fs write success');
+                    const keystore = fs.readFileSync(`keystore/keystore-${account.address}.json`,'utf-8');
+                    const decryptedKeyring = await caver.wallet.keyring.decrypt(keystore,password);
+                    console.log(`decrypted : `);
+                    console.log(decryptedKeyring);
+
+                    //console.log(`account : ${decryptedKeyring._address} private key : ${decryptedKeyring._key._privateKey}`)
+                    await caver.klay.accounts.createWithAccountKey(decryptedKeyring._address,decryptedKeyring._key._privateKey);
+                    await caver.klay.accounts.wallet.add(decryptedKeyring._key._privateKey);
+                    console.log(await caver.klay.getAccounts());
+                }
+            });
+
+            console.log('accounts : ' + await caver.klay.getAccounts());
 
             return keyring;
 
         }catch(err){
             console.log(err);
+
+            return null;
         }
     }
 
-    getAccountType = async (account)=> {
+    getRpcAccountType = async (account)=> {
         try{
-            const acc = await caver.rpc.klay.getAccount(account)
+            const acc = await caver.rpc.klay.getAccount(account);
+            console.log(acc);
 
             return acc.accType;
+        
+            
         }catch(err){
-            console.log(err)
+            console.log(err);
+
+            return null;
         }
     }
 
-    getNonce = async (account)=> {
+    getRpcNonce = async (account)=> {
         try{
             const acc = await caver.rpc.klay.getAccount(account)
 
             return acc.account.nonce;
+
         }catch(err){
-            console.log(err)
+            console.log(err);
+            
+            return null;
         }
     }
 
-    getBalance = async (account)=> {
+    getRpcBalance = async (account)=> {
         try{
             const acc = await caver.rpc.klay.getAccount(account);
             // if(caver.utils.isBigNumber(acc.account.balance)){
@@ -49,15 +80,21 @@ class Keyring {
             //     value = await caver.utils.hexToNumber(acc.account.balance);
             // }
 
-            const value = caver.utils.convertFromPeb(caver.utils.toBN(acc.account.balance).toString());
+            
+            const balance = await caver.utils.hexToNumberString(await caver.rpc.klay.getBalance(account));
+
+            const value = await caver.utils.convertFromPeb(balance);
 
             return value;
+
         }catch(err){
-            console.log(err)
+            console.log(err);
+
+            return null;
         }
     }
 
-    sendKlay = async (from,to,value)=> {
+    sendRpcKlay = async (from,to,value)=> {
         try{
             const tx = await caver.transaction.valueTransfer.create({
                 from: from,
@@ -68,14 +105,15 @@ class Keyring {
             await caver.rpc.klay.sendTransaction(tx).then(console.log);
 
         }catch(err){
-            console.log(err)
+            console.log(err);
+
+            return null;
         }
     }
 
-    createMnemonic = async ()=> {
-
+    createMnemonic = ()=> {
+        return bip39.generateMnemonic();
     }
-
 }
 
 const keyring = new Keyring();
