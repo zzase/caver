@@ -10,7 +10,9 @@ class Keyring {
            
             //const keyring = await caver.wallet.keyring.generate();
             const account = await caver.klay.accounts.create(password);
-            const keyring = await account.encrypt(password)
+            const keyring = await account.encrypt(password);
+            
+            await caver.klay.accounts.wallet.add(account.privateKey, account.address);
             
             fs.writeFile(`keystore/keystore-${account.address}.json`,JSON.stringify(keyring),async (err)=>{
                 if(err){
@@ -22,15 +24,14 @@ class Keyring {
                     const decryptedKeyring = await caver.wallet.keyring.decrypt(keystore,password);
                     console.log(`decrypted : `);
                     console.log(decryptedKeyring);
+                    await caver.wallet.add(decryptedKeyring);
 
                     //console.log(`account : ${decryptedKeyring._address} private key : ${decryptedKeyring._key._privateKey}`)
                     await caver.klay.accounts.createWithAccountKey(decryptedKeyring._address,decryptedKeyring._key._privateKey);
-                    await caver.klay.accounts.wallet.add(decryptedKeyring._key._privateKey);
+                    
                     console.log(await caver.klay.getAccounts());
                 }
             });
-
-            console.log('accounts : ' + await caver.klay.getAccounts());
 
             return keyring;
 
@@ -41,7 +42,7 @@ class Keyring {
         }
     }
 
-    getRpcAccountType = async (account)=> {
+    getAccountType = async (account)=> {
         try{
             const acc = await caver.rpc.klay.getAccount(account);
             console.log(acc);
@@ -56,7 +57,7 @@ class Keyring {
         }
     }
 
-    getRpcNonce = async (account)=> {
+    getNonce = async (account)=> {
         try{
             const acc = await caver.rpc.klay.getAccount(account)
 
@@ -69,7 +70,7 @@ class Keyring {
         }
     }
 
-    getRpcBalance = async (account)=> {
+    getBalance = async (account)=> {
         try{
             const acc = await caver.rpc.klay.getAccount(account);
             // if(caver.utils.isBigNumber(acc.account.balance)){
@@ -94,7 +95,7 @@ class Keyring {
         }
     }
 
-    sendRpcKlay = async (from,to,value)=> {
+    sendKlay = async (from,to,value)=> {
         try{
             const tx = await caver.transaction.valueTransfer.create({
                 from: from,
@@ -102,8 +103,10 @@ class Keyring {
                 value : caver.utils.convertToPeb(`${value}`,'KLAY'),
                 gas : 50000
             });
-            await caver.rpc.klay.sendTransaction(tx).then(console.log);
+            const receipt =  await caver.rpc.klay.sendTransaction(tx);
 
+            return receipt;
+            
         }catch(err){
             console.log(err);
 

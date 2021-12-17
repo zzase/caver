@@ -35,7 +35,7 @@ const run = ()=>{
 
             case '2' :
                 r.question('account : ',async (account)=>{
-                    const accountType = await keyring.getRpcAccountType(account);
+                    const accountType = await keyring.getAccountType(account);
 
                     console.log(`Account Type : 0x${accountType}`);
                 });
@@ -43,7 +43,7 @@ const run = ()=>{
             
             case '3' :
                 r.question('account : ',async (account)=>{
-                    const nonce = await keyring.getRpcNonce(account);
+                    const nonce = await keyring.getNonce(account);
 
                     console.log(`Nonce : ${nonce}`);
                 });
@@ -51,7 +51,7 @@ const run = ()=>{
 
             case '4' :
                 r.question('account : ',async (account)=>{
-                    const balance = await keyring.getRpcBalance(account);
+                    const balance = await keyring.getBalance(account);
 
                     console.log(`Balance : ${balance} klay`);
                 });
@@ -60,7 +60,7 @@ const run = ()=>{
                 r.question('from : ',async (from)=>{
                     r.question('to : ', async (to)=>{
                         r.question('value : ', async(value)=>{
-                            keyring.sendRpcKlay(from,to,value);
+                            console.log(await keyring.sendKlay(from,to,value));
                         })
                     })
                 });
