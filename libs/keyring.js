@@ -5,6 +5,10 @@ const caver = require('../provider');
 const bip39 = require('bip39');
 
 class Keyring {
+
+    /**
+     * @description  create v4 keystore
+     */
     createKeyring = async (password)=> {
         try{
            
@@ -42,9 +46,12 @@ class Keyring {
         }
     }
 
-    getAccountType = async (account)=> {
+    /**
+     * @description  get account type
+     */
+    getAccountType = async (address)=> {
         try{
-            const acc = await caver.rpc.klay.getAccount(account);
+            const acc = await caver.rpc.klay.getAccount(address);
             console.log(acc);
 
             return acc.accType;
@@ -57,9 +64,12 @@ class Keyring {
         }
     }
 
-    getNonce = async (account)=> {
+    /**
+     * @description  get nonce of address
+     */
+    getNonce = async (address)=> {
         try{
-            const acc = await caver.rpc.klay.getAccount(account)
+            const acc = await caver.rpc.klay.getAccount(address)
 
             return acc.account.nonce;
 
@@ -70,19 +80,12 @@ class Keyring {
         }
     }
 
-    getBalance = async (account)=> {
+    /**
+     * @description  get balance address
+     */
+    getBalance = async (address)=> {
         try{
-            const acc = await caver.rpc.klay.getAccount(account);
-            // if(caver.utils.isBigNumber(acc.account.balance)){
-            //     console.log('Big Number');
-            //     value = await caver.utils.toBN(acc.account.balance).toString();
-            // }
-            // else{
-            //     value = await caver.utils.hexToNumber(acc.account.balance);
-            // }
-
-            
-            const balance = await caver.utils.hexToNumberString(await caver.rpc.klay.getBalance(account));
+            const balance = await caver.utils.hexToNumberString(await caver.rpc.klay.getBalance(address));
 
             const value = await caver.utils.convertFromPeb(balance);
 
@@ -95,6 +98,9 @@ class Keyring {
         }
     }
 
+    /**
+     * @description  send klay
+     */
     sendKlay = async (from,to,value)=> {
         try{
             const tx = await caver.transaction.valueTransfer.create({
@@ -106,7 +112,7 @@ class Keyring {
             const receipt =  await caver.rpc.klay.sendTransaction(tx);
 
             return receipt;
-            
+
         }catch(err){
             console.log(err);
 
@@ -114,6 +120,9 @@ class Keyring {
         }
     }
 
+    /**
+     * @description  create mnemonic code
+     */
     createMnemonic = ()=> {
         return bip39.generateMnemonic();
     }

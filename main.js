@@ -34,7 +34,7 @@ const run = ()=>{
                 break;
 
             case '2' :
-                r.question('account : ',async (account)=>{
+                r.question('address : ',async (account)=>{
                     const accountType = await keyring.getAccountType(account);
 
                     console.log(`Account Type : 0x${accountType}`);
@@ -42,7 +42,7 @@ const run = ()=>{
                 break;
             
             case '3' :
-                r.question('account : ',async (account)=>{
+                r.question('address : ',async (account)=>{
                     const nonce = await keyring.getNonce(account);
 
                     console.log(`Nonce : ${nonce}`);
@@ -50,7 +50,7 @@ const run = ()=>{
                 break;
 
             case '4' :
-                r.question('account : ',async (account)=>{
+                r.question('address : ',async (account)=>{
                     const balance = await keyring.getBalance(account);
 
                     console.log(`Balance : ${balance} klay`);
